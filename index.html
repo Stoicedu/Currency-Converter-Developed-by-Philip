@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Philip Currency Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            background-image: url('https://sspark.genspark.ai/cfimages?u1=vnCCR3Tk6nsjwcwg77XmwKgFE976NcJlTp6L9mvRU5SEYye4%2BfYVPJEtnpiO2t1oHiXdGFqdy0p6mwgrM9ShYCYbpJh7Hu49iXJh%2FAzu3a2Zq83qlpLfdC0AspzFM0mYJqPPS7%2BM4MUzZdIgos%2B1w8s%2FEPlqIsummbCAqzGZmdo%3D&u2=OhDBBxJChsdFblib&width=2560');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .background-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(10, 25, 47, 0.92), rgba(58, 12, 163, 0.85));
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            color: white;
+        }
+
+        header h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            background: linear-gradient(135deg, #ffd700, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: #ffd700;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            margin-top: 10px;
+        }
+
+        main {
+            padding: 20px 0;
+        }
+
+        .calculator-card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+        }
+
+        .input-section {
+            margin-bottom: 40px;
+        }
+
+        .base-currency-selector {
+            margin-bottom: 25px;
+        }
+
+        .base-currency-selector label {
+            display: block;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .base-currency-selector select {
+            width: 100%;
+            max-width: 500px;
+            padding: 12px 15px;
+            font-size: 1rem;
+            border: 2px solid #9b59b6;
+            border-radius: 10px;
+            outline: none;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .base-currency-selector select:hover {
+            border-color: #8e44ad;
+        }
+
+        .base-currency-selector select:focus {
+            border-color: #8e44ad;
+            box-shadow: 0 0 20px rgba(155, 89, 182, 0.3);
+        }
+
+        .amount-input-wrapper {
+            margin-top: 20px;
+        }
+
+        .amount-input-wrapper label {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .amount-input-wrapper input {
+            width: 100%;
+            max-width: 500px;
+            padding: 15px 20px;
+            font-size: 1.2rem;
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .amount-input-wrapper input:focus {
+            border-color: #2980b9;
+            box-shadow: 0 0 20px rgba(52, 152, 219, 0.3);
+        }
+
+        .input-hint {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .currencies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+            transition: opacity 0.3s ease;
+        }
+
+        .currency-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .currency-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            transition: transform 0.5s ease;
+        }
+
+        .currency-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .currency-card:hover::before {
+            transform: translate(25%, 25%);
+        }
+
+        .player-image {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid white;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .player-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .currency-info {
+            text-align: center;
+            color: white;
+        }
+
+        .currency-info h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .player-name {
+            font-size: 0.95rem;
+            font-weight: 400;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .currency-code {
+            font-size: 0.85rem;
+            font-weight: 300;
+            opacity: 0.8;
+            margin-bottom: 15px;
+        }
+
+        .converted-amount {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-top: 15px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .converted-amount .amount {
+            display: inline-block;
+            min-width: 100px;
+        }
+
+        .last-updated {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.5rem;
+            }
+
+            .tagline {
+                font-size: 1rem;
+            }
+
+            .calculator-card {
+                padding: 25px;
+            }
+
+            .currencies-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .currency-card {
+                padding: 20px;
+            }
+
+            .player-image {
+                width: 60px;
+                height: 60px;
+            }
+
+            .currency-info h3 {
+                font-size: 1.2rem;
+            }
+
+            .converted-amount {
+                font-size: 1.6rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 2rem;
+            }
+
+            .currency-card {
+                padding: 15px;
+            }
+
+            .player-image {
+                width: 50px;
+                height: 50px;
+            }
+
+            .currency-info h3 {
+                font-size: 1.1rem;
+            }
+
+            .converted-amount {
+                font-size: 1.4rem;
+            }
+        }
+
+        /* Loading animation */
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .loading {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-overlay"></div>
+    
+    <div class="container">
+        <header>
+            <h1>Philip Currency Calculator</h1>
+            <p class="tagline">Hi I'm Bob, your very best friend. If you don't give me money, the song will never end tada!</p>
+        </header>
+
+        <main>
+            <div class="calculator-card">
+                <div class="input-section">
+                    <div class="base-currency-selector">
+                        <label for="base-currency">Base Currency</label>
+                        <select id="base-currency">
+                            <option value="KRW">🇰🇷 KRW - Korean Won</option>
+                            <option value="USD">🇺🇸 USD - US Dollar</option>
+                            <option value="EUR">🇪🇺 EUR - Euro</option>
+                            <option value="GBP">🇬🇧 GBP - British Pound</option>
+                            <option value="JPY">🇯🇵 JPY - Japanese Yen</option>
+                            <option value="CNY">🇨🇳 CNY - Chinese Yuan</option>
+                            <option value="AUD">🇦🇺 AUD - Australian Dollar</option>
+                            <option value="CAD">🇨🇦 CAD - Canadian Dollar</option>
+                            <option value="CHF">🇨🇭 CHF - Swiss Franc</option>
+                            <option value="HKD">🇭🇰 HKD - Hong Kong Dollar</option>
+                            <option value="SGD">🇸🇬 SGD - Singapore Dollar</option>
+                            <option value="INR">🇮🇳 INR - Indian Rupee</option>
+                        </select>
+                    </div>
+                    
+                    <div class="amount-input-wrapper">
+                        <label for="base-amount"><span id="base-currency-label">Amount in KRW (₩)</span></label>
+                        <input type="number" id="base-amount" placeholder="Enter amount" value="10000">
+                        <p class="input-hint">💡 Press Enter to see more currencies</p>
+                    </div>
+                </div>
+
+                <div class="currencies-grid">
+                    <!-- Currency cards will be dynamically generated by JavaScript -->
+                </div>
+
+                <div class="last-updated">
+                    <p>Last updated: <span id="last-update-time">-</span></p>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Philip Currency Calculator | Powered by Football Stars</p>
+        </footer>
+    </div>
+
+    <script>
+        // Currency conversion rates
+        let exchangeRates = {};
+        let lastUpdateTime = null;
+        let currentCurrencySet = 0;
+        let baseCurrency = 'KRW';
+
+        // Currency symbols mapping
+        const currencySymbols = {
+            'KRW': '₩',
+            'USD': '$',
+            'EUR': '€',
+            'GBP': '£',
+            'JPY': '¥',
+            'CNY': '¥',
+            'AUD': '$',
+            'CAD': '$',
+            'CHF': 'CHF',
+            'HKD': '$',
+            'SGD': '$',
+            'INR': '₹'
+        };
+
+        // API endpoint for currency conversion
+        function getApiUrl(base) {
+            return `https://api.exchangerate-api.com/v4/latest/${base}`;
+        }
+
+        // Define different currency sets with player images
+        const currencySets = [
+            [
+                { code: 'KRW', name: 'Korean Won', player: 'Son Heung-min', symbol: '₩', image: 'https://sspark.genspark.ai/cfimages?u1=1UK98EaVhok8bxY8lWDwBlUK4Z5EEHH%2BQAt80ZScs1cBw66BicTD75doy2KG9Z%2FPuB%2BdVU1QKvs20IAizxMuhf0T8gWjDdNHgPHcTcZ1pQa45%2BKF5vmqRjWKuICxSCpFz94cF2iUOQWMKt899n8E&u2=cPlO5WZkKmD8rlRn&width=2560' },
+                { code: 'AUD', name: 'Australian Dollar', player: 'Tim Cahill', symbol: '$', image: 'https://sspark.genspark.ai/cfimages?u1=ZVON68gGy0f71faWKPhuhThPL0kSGRyMKhX0FSRSlDOH3M3XhE9xcG7a1HG4G7Nw9J6G5HOY%2B8LZRxSwtAQ1pcqGi8apZEkry%2F6zZglL5OElcOgJFqaj6NY%3D&u2=oCUxFpKwgi1fnKeG&width=2560' },
+                { code: 'EUR', name: 'Euro', player: 'Lamine Yamal', symbol: '€', region: '(Spain, Portugal, Germany, Italy, France)', image: 'https://sspark.genspark.ai/cfimages?u1=tOF4BaGhwRvXz8bFEw2JfG1bvgHiI0c7ZcMwINAuCp0iyMKjJLIkWcVm1tGuIGiAXrn4PO%2BvW81al8OU6Ne%2BGBUsBBpYBfrwdTFEunw7N4D7er4ykuby3bqHcryJc3XGHY4pLB3mpELBcBZ3X86MauN5B9AZg2AYJngeqP7HlEskoART2TWyoJ3pJPkHgfBSAk7TMtM%3D&u2=V0cXrI%2BmBLBG4yS2&width=2560' },
+                { code: 'USD', name: 'US Dollar', player: 'Christian Pulisic', symbol: '$', image: 'https://sspark.genspark.ai/cfimages?u1=4%2BfdEAihpR%2BOzYu7SAs%2Bi3Wrnl%2FtFzhfIk%2FG7tPqajD0pOXFGc5bVlBeZZY1pKY1gFk9rFXCx1cDFz8n7C3Hd0SyuwPdK4EkiiynHyS9Z%2FqFm%2FeStn%2FslDQMERho0FE6nj9Yyuhw1Or7yBa5D6FT9mAKVYmZSM6VQwBEGp8bvz6kW4ikfg%3D%3D&u2=84dmvbdnfEOh3vwW&width=2560' },
+                { code: 'GBP', name: 'British Pound', player: 'Harry Kane', symbol: '£', image: 'https://sspark.genspark.ai/cfimages?u1=0nEeF%2FmLExwFWvcDqSl60bBsBlJC%2FydEaCzFcvxIZv8zoi4G3bzj9Oonh2CKzzthfL1t13hArOR0L0nA7uf45jFjFT8BARvvETCH9aenbacGgqxE5v6myeykoquJeg%3D%3D&u2=Uoa3tWWW4DipEUES&width=2560' },
+                { code: 'BRL', name: 'Brazilian Real', player: 'Neymar Jr', symbol: 'R$', image: 'https://sspark.genspark.ai/cfimages?u1=4zJEHVEuaUylFJxK83OA%2BKPbFwEXN%2FJdPf2w%2FvQkPATUllEKuYJjM5WWDjdG%2Fut%2BdVQu4RXXk8p0JcuDG9c%2Fzz75d6mT0B7eeIS98QRLb5EeNa709yM1tNfTLtQ8R25NEdLiAZhFilhpNA%3D%3D&u2=PyOBDqfHHpp57uDD&width=2560' },
+                { code: 'XAF', name: 'Central African CFA Franc', player: 'Samuel Eto\'o', symbol: 'FCFA', image: 'https://sspark.genspark.ai/cfimages?u1=vpxhKYMG7JUEIkN4Z2z%2Btu2nJPw28L3qa2FzbTOFuk6XsuxZUfaIdysxLvsQ6ULYSvpIpM0vVoM1RBL69%2FBFXsUueNBm4L6kQSQPIrXoIh55VZ8%3D&u2=jdfqV3oCNsRRZYOE&width=2560' },
+                { code: 'ARS', name: 'Argentine Peso', player: 'Lionel Messi', symbol: '$', image: 'https://sspark.genspark.ai/cfimages?u1=7SoXp9s6%2FSGoljA%2FpwrPDWD9tm7rtfvIPlUhp1LOmQ0xvuO%2BdWtiiqqN7jY49bZpGnLPpec1tgU7TmrbUGxGOFSh66e2Z19LjIKqunt0ywpdFZ0vN5Wcv%2F2kg3s%3D&u2=Kd1xW8OeltFFVDH1&width=2560' }
+            ],
+            [
+                { code: 'JPY', name: 'Japanese Yen', player: 'Takefusa Kubo', symbol: '¥', image: 'https://sspark.genspark.ai/cfimages?u1=1UK98EaVhok8bxY8lWDwBlUK4Z5EEHH%2BQAt80ZScs1cBw66BicTD75doy2KG9Z%2FPuB%2BdVU1QKvs20IAizxMuhf0T8gWjDdNHgPHcTcZ1pQa45%2BKF5vmqRjWKuICxSCpFz94cF2iUOQWMKt899n8E&u2=cPlO5WZkKmD8rlRn&width=2560' },
+                { code: 'CNY', name: 'Chinese Yuan', player: 'Wu Lei', symbol: '¥', image: 'https://sspark.genspark.ai/cfimages?u1=dpcDb2k5uADbsR5bgZjo4zIuw%2FuBjS4PHqafZEaMc4zLep15Rni%2B3CKYzlmdu5ieMyEav2x7439DnH10DLnYlrKe9oHYoWOJpqKY%2BrzIOdxXqc%2BivwgLaC8KFfDPKWVqm4krE43Np12OTB%2BCFOu8T9bajGUqp1DCGS47CPkh6fu%2Buk6YE%2FH50vg%2FfITSiWrQvhTEbrHRwA%3D%3D&u2=dyqL1gT053jmEme0&width=2560' },
+                { code: 'AUD', name: 'Australian Dollar', player: 'Tim Cahill', symbol: '$', image: 'https://sspark.genspark.ai/cfimages?u1=4%2BfdEAihpR%2BOzYu7SAs%2Bi3Wrnl%2FtFzhfIk%2FG7tPqajD0pOXFGc5bVlBeZZY1pKY1gFk9rFXCx1cDFz8n7C3Hd0SyuwPdK4EkiiynHyS9Z%2FqFm%2FeStn%2FslDQMERho0FE6nj9Yyuhw1Or7yBa5D6FT9mAKVYmZSM6VQwBEGp8bvz6kW4ikfg%3D%3D&u2=84dmvbdnfEOh3vwW&width=2560' },
+                { code: 'CAD', name: 'Canadian Dollar', player: 'Alphonso Davies', symbol: '$', image: 'https://sspark.genspark.ai/cfimages?u1=0nEeF%2FmLExwFWvcDqSl60bBsBlJC%2FydEaCzFcvxIZv8zoi4G3bzj9Oonh2CKzzthfL1t13hArOR0L0nA7uf45jFjFT8BARvvETCH9aenbacGgqxE5v6myeykoquJeg%3D%3D&u2=Uoa3tWWW4DipEUES&width=2560' },
+                { code: 'CHF', name: 'Swiss Franc', player: 'Xherdan Shaqiri', symbol: 'CHF', image: 'https://sspark.genspark.ai/cfimages?u1=4zJEHVEuaUylFJxK83OA%2BKPbFwEXN%2FJdPf2w%2FvQkPATUllEKuYJjM5WWDjdG%2Fut%2BdVQu4RXXk8p0JcuDG9c%2Fzz75d6mT0B7eeIS98QRLb5EeNa709yM1tNfTLtQ8R25NEdLiAZhFilhpNA%3D%3D&u2=PyOBDqfHHpp57uDD&width=2560' },
+                { code: 'MXN', name: 'Mexican Peso', player: 'Hirving Lozano', symbol: '$', image: 'https://sspark.genspark.ai/cfimages?u1=vpxhKYMG7JUEIkN4Z2z%2Btu2nJPw28L3qa2FzbTOFuk6XsuxZUfaIdysxLvsQ6ULYSvpIpM0vVoM1RBL69%2FBFXsUueNBm4L6kQSQPIrXoIh55VZ8%3D&u2=jdfqV3oCNsRRZYOE&width=2560' },
+                { code: 'THB', name: 'Thai Baht', player: 'Chanathip Songkrasin', symbol: '฿', image: 'https://sspark.genspark.ai/cfimages?u1=7SoXp9s6%2FSGoljA%2FpwrPDWD9tm7rtfvIPlUhp1LOmQ0xvuO%2BdWtiiqqN7jY49bZpGnLPpec1tgU7TmrbUGxGOFSh66e2Z19LjIKqunt0ywpdFZ0vN5Wcv%2F2kg3s%3D&u2=Kd1xW8OeltFFVDH1&width=2560' }
+            ],
+            [
+                { code: 'SGD', name: 'Singapore Dollar', player: 'Fandi Ahmad', symbol: '$', image: 'https://sspark.genspark.ai/cfimages?u1=1UK98EaVhok8bxY8lWDwBlUK4Z5EEHH%2BQAt80ZScs1cBw66BicTD75doy2KG9Z%2FPuB%2BdVU1QKvs20IAizxMuhf0T8gWjDdNHgPHcTcZ1pQa45%2BKF5vmqRjWKuICxSCpFz94cF2iUOQWMKt899n8E&u2=cPlO5WZkKmD8rlRn&width=2560' },
+                { code: 'INR', name: 'Indian Rupee', player: 'Sunil Chhetri', symbol: '₹', image: 'https://sspark.genspark.ai/cfimages?u1=dpcDb2k5uADbsR5bgZjo4zIuw%2FuBjS4PHqafZEaMc4zLep15Rni%2B3CKYzlmdu5ieMyEav2x7439DnH10DLnYlrKe9oHYoWOJpqKY%2BrzIOdxXqc%2BivwgLaC8KFfDPKWVqm4krE43Np12OTB%2BCFOu8T9bajGUqp1DCGS47CPkh6fu%2Buk6YE%2FH50vg%2FfITSiWrQvhTEbrHRwA%3D%3D&u2=dyqL1gT053jmEme0&width=2560' },
+                { code: 'ZAR', name: 'South African Rand', player: 'Benni McCarthy', symbol: 'R', image: 'https://sspark.genspark.ai/cfimages?u1=4%2BfdEAihpR%2BOzYu7SAs%2Bi3Wrnl%2FtFzhfIk%2FG7tPqajD0pOXFGc5bVlBeZZY1pKY1gFk9rFXCx1cDFz8n7C3Hd0SyuwPdK4EkiiynHyS9Z%2FqFm%2FeStn%2FslDQMERho0FE6nj9Yyuhw1Or7yBa5D6FT9mAKVYmZSM6VQwBEGp8bvz6kW4ikfg%3D%3D&u2=84dmvbdnfEOh3vwW&width=2560' },
+                { code: 'TRY', name: 'Turkish Lira', player: 'Arda Güler', symbol: '₺', image: 'https://sspark.genspark.ai/cfimages?u1=0nEeF%2FmLExwFWvcDqSl60bBsBlJC%2FydEaCzFcvxIZv8zoi4G3bzj9Oonh2CKzzthfL1t13hArOR0L0nA7uf45jFjFT8BARvvETCH9aenbacGgqxE5v6myeykoquJeg%3D%3D&u2=Uoa3tWWW4DipEUES&width=2560' },
+                { code: 'RUB', name: 'Russian Ruble', player: 'Andrey Arshavin', symbol: '₽', image: 'https://sspark.genspark.ai/cfimages?u1=4zJEHVEuaUylFJxK83OA%2BKPbFwEXN%2FJdPf2w%2FvQkPATUllEKuYJjM5WWDjdG%2Fut%2BdVQu4RXXk8p0JcuDG9c%2Fzz75d6mT0B7eeIS98QRLb5EeNa709yM1tNfTLtQ8R25NEdLiAZhFilhpNA%3D%3D&u2=PyOBDqfHHpp57uDD&width=2560' },
+                { code: 'SAR', name: 'Saudi Riyal', player: 'Salem Al-Dawsari', symbol: '﷼', image: 'https://sspark.genspark.ai/cfimages?u1=vpxhKYMG7JUEIkN4Z2z%2Btu2nJPw28L3qa2FzbTOFuk6XsuxZUfaIdysxLvsQ6ULYSvpIpM0vVoM1RBL69%2FBFXsUueNBm4L6kQSQPIrXoIh55VZ8%3D&u2=jdfqV3oCNsRRZYOE&width=2560' },
+                { code: 'AED', name: 'UAE Dirham', player: 'Omar Abdulrahman', symbol: 'د.إ', image: 'https://sspark.genspark.ai/cfimages?u1=7SoXp9s6%2FSGoljA%2FpwrPDWD9tm7rtfvIPlUhp1LOmQ0xvuO%2BdWtiiqqN7jY49bZpGnLPpec1tgU7TmrbUGxGOFSh66e2Z19LjIKqunt0ywpdFZ0vN5Wcv%2F2kg3s%3D&u2=Kd1xW8OeltFFVDH1&width=2560' }
+            ]
+        ];
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchExchangeRates();
+            
+            // Add event listener for base currency changes
+            const baseCurrencySelect = document.getElementById('base-currency');
+            baseCurrencySelect.addEventListener('change', function() {
+                baseCurrency = this.value;
+                updateBaseCurrencyLabel();
+                fetchExchangeRates();
+            });
+            
+            // Add event listener for input changes
+            const baseInput = document.getElementById('base-amount');
+            baseInput.addEventListener('input', updateConversions);
+            
+            // Add Enter key listener to cycle currency sets
+            baseInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    cycleCurrencySet();
+                }
+            });
+            
+            // Update conversions every 60 seconds
+            setInterval(fetchExchangeRates, 60000);
+            
+            // Render initial currency set
+            renderCurrencySet();
+        });
+
+        // Fetch exchange rates from API
+        async function fetchExchangeRates() {
+            try {
+                const response = await fetch(getApiUrl(baseCurrency));
+                const data = await response.json();
+                
+                if (data && data.rates) {
+                    exchangeRates = data.rates;
+                    lastUpdateTime = new Date().toLocaleString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    document.getElementById('last-update-time').textContent = lastUpdateTime;
+                    updateConversions();
+                }
+            } catch (error) {
+                console.error('Error fetching exchange rates:', error);
+                showNotification('Using fallback exchange rates');
+                updateConversions();
+            }
+        }
+
+        // Update base currency label
+        function updateBaseCurrencyLabel() {
+            const symbol = currencySymbols[baseCurrency] || '';
+            const label = document.getElementById('base-currency-label');
+            label.textContent = `Amount in ${baseCurrency} (${symbol})`;
+        }
+
+        // Update all currency conversions
+        function updateConversions() {
+            const baseAmount = parseFloat(document.getElementById('base-amount').value) || 0;
+            const currencies = currencySets[currentCurrencySet];
+            
+            currencies.forEach(currency => {
+                if (currency.code === baseCurrency) {
+                    const amountElement = document.querySelector(`[data-target="${currency.code}"]`);
+                    if (amountElement) {
+                        amountElement.textContent = formatNumber(baseAmount);
+                    }
+                    return;
+                }
+                
+                const rate = exchangeRates[currency.code];
+                if (rate) {
+                    const convertedAmount = (baseAmount * rate).toFixed(2);
+                    const amountElement = document.querySelector(`[data-target="${currency.code}"]`);
+                    
+                    if (amountElement) {
+                        amountElement.classList.add('loading');
+                        setTimeout(() => {
+                            amountElement.textContent = formatNumber(convertedAmount);
+                            amountElement.classList.remove('loading');
+                        }, 100);
+                    }
+                }
+            });
+        }
+
+        // Cycle through currency sets
+        function cycleCurrencySet() {
+            currentCurrencySet = (currentCurrencySet + 1) % currencySets.length;
+            renderCurrencySet();
+            updateConversions();
+            showNotification(`Currency Set ${currentCurrencySet + 1} of ${currencySets.length}`);
+        }
+
+        // Render the current currency set
+        function renderCurrencySet() {
+            const currenciesGrid = document.querySelector('.currencies-grid');
+            const currencies = currencySets[currentCurrencySet];
+            
+            currenciesGrid.style.opacity = '0';
+            
+            setTimeout(() => {
+                currenciesGrid.innerHTML = '';
+                
+                currencies.forEach(currency => {
+                    const cardHTML = `
+                        <div class="currency-card" data-currency="${currency.code}">
+                            <div class="player-image">
+                                <img src="${currency.image}" alt="${currency.player}">
+                            </div>
+                            <div class="currency-info">
+                                <h3>${currency.name}</h3>
+                                <p class="player-name">${currency.player}</p>
+                                <p class="currency-code">${currency.code}${currency.region ? ' ' + currency.region : ''}</p>
+                                <p class="converted-amount">${currency.symbol} <span class="amount" data-target="${currency.code}">0.00</span></p>
+                            </div>
+                        </div>
+                    `;
+                    currenciesGrid.insertAdjacentHTML('beforeend', cardHTML);
+                });
+                
+                currenciesGrid.style.opacity = '1';
+                attachHoverEffects();
+            }, 300);
+        }
+
+        // Attach hover effects to currency cards
+        function attachHoverEffects() {
+            const currencyCards = document.querySelectorAll('.currency-card');
+            currencyCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px) scale(1.02)';
+                });
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        }
+
+        // Show notification
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed; top: 20px; right: 20px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white; padding: 15px 25px; border-radius: 10px;
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3); z-index: 1000;
+                font-weight: 600; animation: slideIn 0.3s ease;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 2000);
+        }
+
+        // Format number with commas
+        function formatNumber(num) {
+            return parseFloat(num).toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+    </script>
+</body>
+</html>
